@@ -394,13 +394,13 @@ def IMGT2Seq(_imgt, _hg, _out, _no_Indel=False, _MultiP=False, _save_intermediat
 
 
 
-        if _MultiP:
+        if _MultiP > 1:
 
-            pool = mp.Pool(processes=8)
+            pool = mp.Pool(processes=_MultiP)
 
             dict_Pool = {HLA_names[i]: pool.apply_async(ProcessIMGT, (_out, HLA_names[i], _hg, _imgt,
                                                                       TARGET_nuc_files[HLA_names[i]], TARGET_gen_files[HLA_names[i]], TARGET_prot_files[HLA_names[i]],
-                                                                      _no_Indel, _save_intermediates))
+                                                                      p_data, _no_Indel, _save_intermediates))
                          for i in range(0, len(HLA_names))}
 
             pool.close()
@@ -409,16 +409,15 @@ def IMGT2Seq(_imgt, _hg, _out, _no_Indel=False, _MultiP=False, _save_intermediat
 
         for i in range(0, len(HLA_names)):
 
-            if _MultiP:
+            if _MultiP > 1:
 
                 t_df_Seqs_SNPS, t_df_Seqs_AA, t_df_forMAP_SNPS, t_df_forMAP_AA, t_MAPTABLE = dict_Pool[HLA_names[i]].get()
 
             else:
                 t_df_Seqs_SNPS, t_df_Seqs_AA, t_df_forMAP_SNPS, t_df_forMAP_AA, t_MAPTABLE \
-                    = ProcessIMGT(_out, HLA_names[i], _hg, _imgt, TARGET_nuc_files[HLA_names[i]],
-                                  TARGET_gen_files[HLA_names[i]], TARGET_prot_files[HLA_names[i]], p_data,
-                                  _no_Indel=_no_Indel,
-                                  _save_intermediates=_save_intermediates)
+                    = ProcessIMGT(_out, HLA_names[i], _hg, _imgt,
+                                  TARGET_nuc_files[HLA_names[i]], TARGET_gen_files[HLA_names[i]], TARGET_prot_files[HLA_names[i]],
+                                  p_data, _no_Indel=_no_Indel, _save_intermediates=_save_intermediates)
 
 
 
@@ -637,7 +636,7 @@ if __name__ == "__main__":
                         required=True)
 
     parser.add_argument("--no-indel", help="\nExcluding indel in HLA sequence outputs.\n\n", action='store_true')
-    # parser.add_argument("--multiprocess", help="\nSetting off parallel multiprocessing.\n\n", type=int, choices=[2,3,4,5,6,7,8], nargs='?', default=1, const=8)
+    parser.add_argument("--multiprocess", help="\nSetting off parallel multiprocessing.\n\n", type=int, choices=[2,3,4,5,6,7,8], nargs='?', default=1, const=8)
     parser.add_argument("--save-intermediates", help="\nDon't remove intermediate files.\n\n", action='store_true')
     parser.add_argument("--imgt-dir", help="\nIn case User just want to specify the directory of IMGT data folder.\n\n")
 
