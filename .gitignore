@@ -1,0 +1,12 @@
+.DS_store
+
+# R
+.Rhistory
+.Rproj.user
+*.Rproj
+
+# Pycharm
+.idea/
+
+# Folders
+tests/
