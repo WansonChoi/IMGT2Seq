@@ -1,5 +1,8 @@
 .DS_store
 
+# Python
+__pycache__/
+
 # R
 .Rhistory
 .Rproj.user
