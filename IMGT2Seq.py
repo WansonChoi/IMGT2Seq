@@ -167,9 +167,8 @@ class IMGT_Dictionary(object):
 
         # temporary hardcoding ---
         self.__dict_AA__, self.__dict_SNPS__, self.__IAT__, self.__d_MapTable__ = \
-            IMGT2Sequence(self.imgt, self.hg, self.out,
-                          _no_Indel=self.no_indel, _MultiP=self.multiprocess,
-                          _save_intermediates=self.save_intermediates, _imgt_dir=self.imgt_dir)
+            IMGT2Seq(self.imgt, self.hg, self.out, _no_Indel=self.no_indel, _MultiP=self.multiprocess,
+                     _save_intermediates=self.save_intermediates, _imgt_dir=self.imgt_dir)
 
 
         self.f__dict_AA__ = True
@@ -214,8 +213,8 @@ class IMGT_Dictionary(object):
 
 
 
-def IMGT2Sequence(_imgt, _hg, _out, _no_Indel=False, _MultiP=False, _save_intermediates=False, _imgt_dir=None,
-                  _no_prime = True):
+def IMGT2Seq(_imgt, _hg, _out, _no_Indel=False, _MultiP=False, _save_intermediates=False, _imgt_dir=None,
+             _no_prime = True, _p_data="./data", _p_src="./src"):
 
     """
     """
@@ -235,8 +234,8 @@ def IMGT2Sequence(_imgt, _hg, _out, _no_Indel=False, _MultiP=False, _save_interm
 
 
     ### Variables for Paths.
-    p_data = "./data/IMGT2Sequence"
-    p_src = "./src/IMGT2Sequence"
+    p_data = _p_data
+    p_src = _p_src
 
 
     ### raw MapTables
@@ -269,16 +268,16 @@ def IMGT2Sequence(_imgt, _hg, _out, _no_Indel=False, _MultiP=False, _save_interm
 
     # ProcessIMGT.py
     if os.path.exists(os.path.join(p_src, "ProcessIMGT.py")):
-        from src.IMGT2Sequence.ProcessIMGT import ProcessIMGT
+        from src.ProcessIMGT import ProcessIMGT
     else:
-        print(std_ERROR_MAIN_PROCESS_NAME + "\"src/IMGT2Sequence/ProcessIMGT.py\" doesn't exist!")
+        print(std_ERROR_MAIN_PROCESS_NAME + "\"src/ProcessIMGT.py\" doesn't exist!")
         sys.exit()
 
     # ClassifyGroups.py
-    if os.path.exists("src/NomenCleaner/ClassifyGroups.py"):
-        from src.NomenCleaner.ClassifyGroups import ClassifyGroups
+    if os.path.exists(os.path.join(p_src, "ClassifyGroups.py")):
+        from src.ClassifyGroups import ClassifyGroups
     else:
-        print(std_ERROR_MAIN_PROCESS_NAME + "\"src/NomenCleaner/ClassifyGroups.py\" doesn't exist!")
+        print(std_ERROR_MAIN_PROCESS_NAME + "\"src/ClassifyGroups.py\" doesn't exist!")
         sys.exit()
 
 
@@ -417,7 +416,8 @@ def IMGT2Sequence(_imgt, _hg, _out, _no_Indel=False, _MultiP=False, _save_interm
             else:
                 t_df_Seqs_SNPS, t_df_Seqs_AA, t_df_forMAP_SNPS, t_df_forMAP_AA, t_MAPTABLE \
                     = ProcessIMGT(_out, HLA_names[i], _hg, _imgt, TARGET_nuc_files[HLA_names[i]],
-                                  TARGET_gen_files[HLA_names[i]], TARGET_prot_files[HLA_names[i]], _no_Indel=_no_Indel,
+                                  TARGET_gen_files[HLA_names[i]], TARGET_prot_files[HLA_names[i]], p_data,
+                                  _no_Indel=_no_Indel,
                                   _save_intermediates=_save_intermediates)
 
 
@@ -637,7 +637,7 @@ if __name__ == "__main__":
                         required=True)
 
     parser.add_argument("--no-indel", help="\nExcluding indel in HLA sequence outputs.\n\n", action='store_true')
-    parser.add_argument("--multiprocess", help="\nSetting off parallel multiprocessing.\n\n", action='store_true')
+    # parser.add_argument("--multiprocess", help="\nSetting off parallel multiprocessing.\n\n", type=int, choices=[2,3,4,5,6,7,8], nargs='?', default=1, const=8)
     parser.add_argument("--save-intermediates", help="\nDon't remove intermediate files.\n\n", action='store_true')
     parser.add_argument("--imgt-dir", help="\nIn case User just want to specify the directory of IMGT data folder.\n\n")
 
@@ -667,5 +667,5 @@ if __name__ == "__main__":
 
 
     ##### < Main function Execution. > #####
-    IMGT2Sequence(_imgt=args.imgt, _hg=args.hg, _out=args.o, _no_Indel=args._no_indel, _MultiP=args.mulitprocess,
-                  _save_intermediates=args.save_intermediates, _imgt_dir=args.imgt_dir)
+    IMGT2Seq(_imgt=args.imgt, _hg=args.hg, _out=args.o, _no_Indel=args.no_indel, _MultiP=args.multiprocess,
+             _save_intermediates=args.save_intermediates, _imgt_dir=args.imgt_dir)

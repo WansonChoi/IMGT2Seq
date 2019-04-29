@@ -18,14 +18,14 @@ isREVERSE = {'A': False, 'C': True, 'B': True, 'DRB1': True, 'DQA1': False, 'DQB
 
 
 
-def ProcessIMGT(_out, _hla, _hg, _imgt, _nuc=None, _gen=None, _prot=None, _no_Indel=False, _save_intermediates=False,
-                _no_prime=True):
+def ProcessIMGT(_out, _hla, _hg, _imgt, _nuc, _gen, _prot, _p_data,
+                _no_Indel=False, _save_intermediates=False, _no_prime=True):
 
 
     ########## < Core Variables > ##########
 
     ### Paths
-    p_data = "./data/IMGT2Sequence"
+    p_data = _p_data
 
 
     ########## < Argument Checking. > ##########
